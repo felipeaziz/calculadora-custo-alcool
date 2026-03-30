@@ -40,13 +40,17 @@ async function calcularCustoBeneficio() {
             body: JSON.stringify(calcData)
         });
 
-        if (!response.ok) throw new Error('Erro ao salvar os dados no servidor');
+        if (!response.ok) {
+            // Tenta ler a mensagem de erro enviada pelo Flask
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro desconhecido no servidor');
+        }
 
         const data = await response.json();
         console.log('Sucesso:', data);
     } catch (error) {
-        console.error('Erro na requisição:', error);
-        alert('Não foi possível salvar no histórico. O servidor está rodando?');
+        alert(`Erro: ${error.message}`);
+        return; // Interrompe para não limpar os campos em caso de erro
     }
 
     document.getElementById('price').value = '';

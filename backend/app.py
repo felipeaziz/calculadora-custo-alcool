@@ -36,15 +36,35 @@ with app.app_context():
 @app.route('/salvar', methods=['POST'])
 def salvar_calculo():
     data = request.json
-    novo_calculo = Calculo(
-        price=data['price'],
-        volumeMl=data['volumeMl'],
-        alcoholicContent=data['alcoholicContent'],
-        costByMl=data['costByMl']
-    )
-    db.session.add(novo_calculo)
-    db.session.commit()
-    return jsonify({'status': 'sucesso', 'mensagem': 'Cálculo salvo no histórico!'})
+
+    # 1. Validação de campos obrigatórios
+    campos_obrigatorios = ['price', 'volumeMl', 'alcoholicContent', 'costByMl']
+    for campo in campos_obrigatorios:
+        if campo not in data:
+            return jsonify({'erro': f'O campo {campo} é obrigatório.'}), 400
+
+    try:
+        # 2. Conversão e validação lógica
+        price = float(data['price'])
+        volume = float(data['volumeMl'])
+        content = float(data['alcoholicContent'])
+        cost = float(data['costByMl'])
+
+        if price <= 0 or volume <= 0 or content < 0 or content > 100:
+            return jsonify({'erro': 'Valores numéricos inválidos ou fora do intervalo.'}), 400
+
+        novo_calculo = Calculo(
+            price=price,
+            volumeMl=volume,
+            alcoholicContent=content,
+            costByMl=cost
+        )
+        db.session.add(novo_calculo)
+        db.session.commit()
+        return jsonify({'status': 'sucesso', 'mensagem': 'Cálculo salvo!'}), 201
+
+    except (ValueError, TypeError):
+        return jsonify({'erro': 'Os dados enviados devem ser números válidos.'}), 400
 
 @app.route('/historico', methods=['GET'])
 def buscar_historico():
