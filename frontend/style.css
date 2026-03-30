@@ -1,0 +1,141 @@
+/* Configurações Globais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    /* Impede que o usuário selecione textos acidentalmente ao clicar rápido */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    /* Garante que o fundo ocupe a tela toda sem scroll desnecessário */
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    border-radius: 0;
+    /* No celular, apps costumam ser borda a borda */
+    box-shadow: none;
+}
+
+/* Navegação */
+nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+nav button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #e4e6eb;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+nav button:hover {
+    background: #d8dadf;
+}
+
+/* Inputs e Botões */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    /* Essencial para o padding não quebrar o layout */
+    font-size: 16px;
+}
+
+button#btn-calcular {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    /* Azul moderno */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+button#btn-calcular:hover {
+    background-color: #0056b3;
+    /* Escurece ao passar o mouse */
+}
+
+/* Tabela de Histórico */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    background-color: #f8f9fa;
+}
+
+/* Destaque do Resultado */
+#result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #e7f3ff;
+    border-radius: 8px;
+    color: #0056b3;
+    text-align: center;
+}
+
+button#btn-limpar {
+    background-color: #dc3545;
+    /* Vermelho */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+button#btn-limpar:hover {
+    background-color: #a71d2a;
+}
+
+/* Estilo para a linha com o melhor custo-benefício */
+.melhor-escolha {
+    background-color: #d4edda !important;
+    /* Um verde suave */
+    border-left: 5px solid #28a745;
+    /* Uma barra lateral para dar destaque */
+}
+
+/* Adicionando um badge (medalha) opcional */
+.medalha {
+    font-size: 1.2em;
+    margin-right: 5px;
+}

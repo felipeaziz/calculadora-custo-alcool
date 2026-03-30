@@ -1,1 +1,47 @@
-<h1>Calculadora de Custo de Álcool</h1>
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        charset="UTF-8">
+    <title>Calculadora de Álcool</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Calculadora Custo-Benefício</h2>
+        <nav>
+            <button onclick="mostrarTela('calculadora')">Calculadora</button>
+            <button onclick="mostrarTela('historico')">Ver Histórico</button>
+        </nav>
+
+        <hr>
+
+        <div id="tela-calculadora">
+            <h2>Nova Medição</h2>
+            <input type="number" id="price" placeholder="Preço Total (R$)">
+            <input type="number" id="volumeMl" placeholder="Volume (ml)">
+            <input type="number" id="alcoholic" placeholder="Teor Alcoólico (%)">
+
+            <button id="btn-calcular" onclick="calcularCustoBeneficio()">Calcular</button>
+
+            <div id="result"></div>
+        </div>
+
+        <div id="tela-historico" style="display: none;">
+            <h2>Últimos Cálculos</h2>
+            <div id="lista-historico">
+            </div>
+
+            <button onclick="limparHistorico()" id="btn-limpar">Limpar
+                Histórico</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
