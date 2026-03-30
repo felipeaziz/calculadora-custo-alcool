@@ -1,6 +1,6 @@
 const API_URL = 'http://192.168.0.30:5000'
 
-function calcularCustoBeneficio() {
+async function calcularCustoBeneficio() {
     //1. Capturar os valores dos inputs
     const price = parseFloat(document.getElementById('price').value);
     const volumeMl = parseFloat(document.getElementById('volumeMl').value);
@@ -32,21 +32,22 @@ function calcularCustoBeneficio() {
         costByMl: costByMl
     };
 
-    //6. Enviar para o python backend
-    fetch(`${API_URL}/salvar`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(calcData)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Sucesso:', data);
-        })
-        .catch(error => {
-            console.error('Erro:', error);
+    //6. Enviar para o python backend usando async/await
+    try {
+        const response = await fetch(`${API_URL}/salvar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(calcData)
         });
+
+        if (!response.ok) throw new Error('Erro ao salvar os dados no servidor');
+
+        const data = await response.json();
+        console.log('Sucesso:', data);
+    } catch (error) {
+        console.error('Erro na requisição:', error);
+        alert('Não foi possível salvar no histórico. O servidor está rodando?');
+    }
 
     document.getElementById('price').value = '';
     document.getElementById('volumeMl').value = '';
@@ -77,56 +78,57 @@ function mostrarTela(tela) {
 }
 
 // 2. Função para buscar os dados do Python
-function carregarHistorico() {
-    fetch(`${API_URL}/historico`)
-        .then(response => response.json())
-        .then(dados => {
-            const container = document.getElementById('lista-historico');
+async function carregarHistorico() {
+    try {
+        const response = await fetch(`${API_URL}/historico`);
+        if (!response.ok) throw new Error('Erro ao carregar histórico');
 
-            if (dados.length === 0) {
-                container.innerHTML = "<p>Nenhum cálculo salvo ainda.</p>";
-                return;
-            }
-            // Encontrar o melhor custo no array
-            const menorCusto = Math.min(...dados.map(item => item.costByMl));
+        const dados = await response.json();
+        const container = document.getElementById('lista-historico');
 
-            // Criando uma tabela simples para os dados
-            let html = '<table border="1" style="width:100%; text-align:left;">';
-            html += '<tr><th>Volume</th><th>Teor</th><th>Preço</th><th>Custo/ml</th></tr>';
+        if (dados.length === 0) {
+            container.innerHTML = "<p>Nenhum cálculo salvo ainda.</p>";
+            return;
+        }
 
-            dados.reverse().forEach(item => { // .reverse() para mostrar o mais recente primeiro
-                // Verificamos se este item é o campeão de custo-benefício
-                const eOMelhor = item.costByMl === menorCusto;
-                const classeDestaque = eOMelhor ? 'class="melhor-escolha"' : '';
-                const medalha = eOMelhor ? '<span class="medalha">🏆</span>' : '';
-                html += `
-                    <tr ${classeDestaque}>
-                        <td>${item.volumeMl}ml</td>
-                        <td>${item.alcoholicContent}%</td>
-                        <td>R$ ${item.price}</td>
-                        <td>${medalha}<strong>R$ ${item.costByMl.toFixed(2)}</strong></td>
-                    </tr>`;
-            });
+        // Encontrar o melhor custo no array
+        const menorCusto = Math.min(...dados.map(item => item.costByMl));
 
-            html += '</table>';
-            container.innerHTML = html;
-        })
-        .catch(error => console.error("Erro ao carregar histórico:", error));
+        let html = '<table border="1" style="width:100%; text-align:left;">';
+        html += '<tr><th>Volume</th><th>Teor</th><th>Preço</th><th>Custo/ml</th></tr>';
+
+        // Note que removemos o .reverse() pois o Python já ordena para nós agora!
+        dados.forEach(item => {
+            const eOMelhor = item.costByMl === menorCusto;
+            const classeDestaque = eOMelhor ? 'class="melhor-escolha"' : '';
+            const medalha = eOMelhor ? '<span class="medalha">🏆</span>' : '';
+            html += `
+                <tr ${classeDestaque}>
+                    <td>${item.volumeMl}ml</td>
+                    <td>${item.alcoholicContent}%</td>
+                    <td>R$ ${item.price}</td>
+                    <td>${medalha}<strong>R$ ${item.costByMl.toFixed(2)}</strong></td>
+                </tr>`;
+        });
+
+        html += '</table>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error("Erro ao carregar histórico:", error);
+    }
 }
 
 //3. Função para limpar o histórico
-function limparHistorico() {
+async function limparHistorico() {
     if (confirm('Tem certeza que deseja apagar todo o histórico?')) {
-        fetch(`${API_URL}/limpar`, {
-            method: 'DELETE'
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Sucesso:', data);
-                carregarHistorico(); // Atualiza a tela
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-            });
+        try {
+            const response = await fetch(`${API_URL}/limpar`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Erro ao limpar histórico');
+
+            carregarHistorico(); // Atualiza a tela após limpar
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Não foi possível limpar o histórico.');
+        }
     }
 }
