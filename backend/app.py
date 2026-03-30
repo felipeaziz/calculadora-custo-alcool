@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-from .extensions import db
+from .extensions import db, migrate
 from .routes import calculos_bp
 
 def create_app():
@@ -15,6 +15,7 @@ def create_app():
 
     # Inicializa as extensões
     db.init_app(app)
+    migrate.init_app(app, db)
 
     # Registra as rotas (Blueprints)
     app.register_blueprint(calculos_bp)

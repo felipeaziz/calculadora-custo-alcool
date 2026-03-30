@@ -1,4 +1,13 @@
-const API_URL = 'http://192.168.0.30:5000'
+// Tenta usar o IP configurado, mas permite fallback para localhost se estiver testando localmente
+const BACKEND_IP = '192.168.0.30';
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : `http://${BACKEND_IP}:5000`;
+
+// Registro do Service Worker para PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("Service Worker registrado com sucesso!"))
+        .catch(err => console.log("Erro ao registrar Service Worker:", err));
+}
 
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
