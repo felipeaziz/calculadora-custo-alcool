@@ -1,30 +1,29 @@
+/* Importando uma fonte mais moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
 /* Configurações Globais */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
     margin: 0;
     display: flex;
     justify-content: center;
-    padding: 20px;
-    /* Impede que o usuário selecione textos acidentalmente ao clicar rápido */
+    align-items: flex-start;
+    min-height: 100vh;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    /* Garante que o fundo ocupe a tela toda sem scroll desnecessário */
-    height: 100vh;
-    overflow: hidden;
 }
 
 .container {
     background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     width: 100%;
-    max-width: 100%;
-    height: 100%;
-    border-radius: 0;
-    /* No celular, apps costumam ser borda a borda */
-    box-shadow: none;
+    max-width: 450px;
+    /* Largura ideal de um app mobile no desktop */
+    min-height: 100vh;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Navegação */
@@ -32,20 +31,27 @@ nav {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    background: #f1f3f5;
+    padding: 5px;
+    border-radius: 12px;
 }
 
 nav button {
     flex: 1;
-    padding: 10px;
+    padding: 12px;
     border: none;
-    border-radius: 8px;
-    background: #e4e6eb;
+    border-radius: 10px;
+    background: transparent;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    color: #495057;
+    transition: all 0.2s;
 }
 
-nav button:hover {
-    background: #d8dadf;
+nav button.active {
+    background: white;
+    color: #007bff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Inputs e Botões */
@@ -53,11 +59,22 @@ input {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
     box-sizing: border-box;
-    /* Essencial para o padding não quebrar o layout */
     font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #495057;
 }
 
 button#btn-calcular {
@@ -67,7 +84,7 @@ button#btn-calcular {
     /* Azul moderno */
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -80,31 +97,48 @@ button#btn-calcular:hover {
     /* Escurece ao passar o mouse */
 }
 
-/* Tabela de Histórico */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
+/* Cards de Histórico (Substituindo a tabela) */
+.card-historico {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    position: relative;
+    transition: transform 0.2s;
 }
 
-th,
-td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    font-size: 14px;
+.card-historico .price-tag {
+    grid-column: span 2;
+    font-size: 18px;
+    font-weight: 700;
+    color: #212529;
+    border-bottom: 1px solid #f1f3f5;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
 }
 
-th {
-    background-color: #f8f9fa;
+.card-historico .info {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.card-historico .cost-highlight {
+    text-align: right;
+    font-weight: 700;
+    color: #007bff;
 }
 
 /* Destaque do Resultado */
 #result {
     margin-top: 20px;
-    padding: 15px;
-    background: #e7f3ff;
-    border-radius: 8px;
+    padding: 20px;
+    background: #f0f7ff;
+    border: 1px solid #cce5ff;
+    border-radius: 12px;
     color: #0056b3;
     text-align: center;
 }
@@ -138,4 +172,141 @@ button#btn-limpar:hover {
 .medalha {
     font-size: 1.2em;
     margin-right: 5px;
+}
+
+/* Sistema de Toasts */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.3s ease-out;
+}
+
+.toast.error {
+    background: #dc3545;
+}
+
+.toast.success {
+    background: #28a745;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Spinner de Carregamento */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: #6c757d;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #e9ecef;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estilos do Modal Customizado */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    width: 85%;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: scaleIn 0.2s ease-out;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-cancelar,
+.btn-confirmar-danger {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancelar {
+    background: #f1f3f5;
+    color: #495057;
+}
+
+.btn-confirmar-danger {
+    background: #dc3545;
+    color: white;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }

@@ -1,5 +1,18 @@
 const API_URL = 'http://192.168.0.30:5000'
 
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerText = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 async function calcularCustoBeneficio() {
     //1. Capturar os valores dos inputs
     const price = parseFloat(document.getElementById('price').value);
@@ -8,7 +21,7 @@ async function calcularCustoBeneficio() {
 
     //2. Validações simples
     if (isNaN(price) || isNaN(volumeMl) || isNaN(alcoholicContent) || volumeMl <= 0) {
-        alert('Por favor, preencha todos os campos corretamente.');
+        showToast('Preencha os campos corretamente.', 'error');
         return;
     }
 
@@ -46,10 +59,9 @@ async function calcularCustoBeneficio() {
             throw new Error(errorData.erro || 'Erro desconhecido no servidor');
         }
 
-        const data = await response.json();
-        console.log('Sucesso:', data);
+        showToast('Cálculo salvo com sucesso!');
     } catch (error) {
-        alert(`Erro: ${error.message}`);
+        showToast(error.message, 'error');
         return; // Interrompe para não limpar os campos em caso de erro
     }
 
@@ -71,24 +83,39 @@ async function calcularCustoBeneficio() {
 
 // 1. Função para trocar de tela (Simples manipulação de CSS)
 function mostrarTela(tela) {
+    const btnCalc = document.getElementById('btn-nav-calc');
+    const btnHist = document.getElementById('btn-nav-hist');
+
     if (tela === 'calculadora') {
         document.getElementById('tela-calculadora').style.display = 'block';
         document.getElementById('tela-historico').style.display = 'none';
+        btnCalc.classList.add('active');
+        btnHist.classList.remove('active');
     } else {
         document.getElementById('tela-calculadora').style.display = 'none';
         document.getElementById('tela-historico').style.display = 'block';
+        btnCalc.classList.remove('active');
+        btnHist.classList.add('active');
         carregarHistorico(); // Sempre que abrir o histórico, busca os dados
     }
 }
 
 // 2. Função para buscar os dados do Python
 async function carregarHistorico() {
+    const container = document.getElementById('lista-historico');
+
+    // Estado de carregamento visual
+    container.innerHTML = `
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Buscando histórico...</p>
+        </div>`;
+
     try {
         const response = await fetch(`${API_URL}/historico`);
         if (!response.ok) throw new Error('Erro ao carregar histórico');
 
         const dados = await response.json();
-        const container = document.getElementById('lista-historico');
 
         if (dados.length === 0) {
             container.innerHTML = "<p>Nenhum cálculo salvo ainda.</p>";
@@ -98,24 +125,22 @@ async function carregarHistorico() {
         // Encontrar o melhor custo no array
         const menorCusto = Math.min(...dados.map(item => item.costByMl));
 
-        let html = '<table border="1" style="width:100%; text-align:left;">';
-        html += '<tr><th>Volume</th><th>Teor</th><th>Preço</th><th>Custo/ml</th></tr>';
+        let html = '';
 
-        // Note que removemos o .reverse() pois o Python já ordena para nós agora!
         dados.forEach(item => {
             const eOMelhor = item.costByMl === menorCusto;
             const classeDestaque = eOMelhor ? 'class="melhor-escolha"' : '';
-            const medalha = eOMelhor ? '<span class="medalha">🏆</span>' : '';
+            const medalha = eOMelhor ? '🏆 Melhor Escolha' : '';
+
             html += `
-                <tr ${classeDestaque}>
-                    <td>${item.volumeMl}ml</td>
-                    <td>${item.alcoholicContent}%</td>
-                    <td>R$ ${item.price}</td>
-                    <td>${medalha}<strong>R$ ${item.costByMl.toFixed(2)}</strong></td>
-                </tr>`;
+                <div class="card-historico ${eOMelhor ? 'melhor-escolha' : ''}">
+                    <div class="price-tag">R$ ${item.price.toFixed(2)} <small style="font-size: 12px; font-weight: 400; color: #6c757d;">${medalha}</small></div>
+                    <div class="info">Volume: ${item.volumeMl}ml</div>
+                    <div class="cost-highlight">R$ ${item.costByMl.toFixed(2)}/ml</div>
+                    <div class="info">Teor: ${item.alcoholicContent}%</div>
+                </div>`;
         });
 
-        html += '</table>';
         container.innerHTML = html;
     } catch (error) {
         console.error("Erro ao carregar histórico:", error);
@@ -123,16 +148,23 @@ async function carregarHistorico() {
 }
 
 //3. Função para limpar o histórico
-async function limparHistorico() {
-    if (confirm('Tem certeza que deseja apagar todo o histórico?')) {
-        try {
-            const response = await fetch(`${API_URL}/limpar`, { method: 'DELETE' });
-            if (!response.ok) throw new Error('Erro ao limpar histórico');
+function limparHistorico() {
+    document.getElementById('modal-confirmacao').style.display = 'flex';
+}
 
-            carregarHistorico(); // Atualiza a tela após limpar
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Não foi possível limpar o histórico.');
-        }
+function fecharModal() {
+    document.getElementById('modal-confirmacao').style.display = 'none';
+}
+
+async function executarLimpeza() {
+    fecharModal();
+    try {
+        const response = await fetch(`${API_URL}/limpar`, { method: 'DELETE' });
+        if (!response.ok) throw new Error('Erro ao limpar histórico');
+
+        showToast('Histórico removido.');
+        carregarHistorico();
+    } catch (error) {
+        showToast('Erro ao limpar histórico.', 'error');
     }
 }
