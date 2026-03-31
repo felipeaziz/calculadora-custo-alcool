@@ -41,6 +41,19 @@ def buscar_historico():
     historico = Calculo.query.order_by(Calculo.id.desc()).all()
     return jsonify([item.to_dict() for item in historico])
 
+@calculos_bp.route('/deletar/<int:id>', methods=['DELETE'])
+def deletar_calculo(id):
+    try:
+        calculo = Calculo.query.get(id)
+        if not calculo:
+            return jsonify({'erro': 'Cálculo não encontrado.'}), 404
+        
+        db.session.delete(calculo)
+        db.session.commit()
+        return jsonify({'status': 'sucesso', 'mensagem': 'Cálculo removido!'})
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 @calculos_bp.route('/limpar', methods=['DELETE'])
 def limpar_historico():
     try:

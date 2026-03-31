@@ -120,6 +120,12 @@ function mostrarTela(tela) {
     }
 }
 
+// Variável global para controlar o que será deletado
+let acaoPendente = {
+    tipo: null, // 'individual' ou 'todos'
+    id: null
+};
+
 // 2. Função para buscar os dados do Python
 async function carregarHistorico() {
     const container = document.getElementById('lista-historico');
@@ -159,7 +165,15 @@ async function carregarHistorico() {
 
             html += `
                 <div class="card-historico ${eOMelhor ? 'melhor-escolha' : ''}">
-                    <div class="price-tag">R$ ${item.price.toFixed(2)} <small style="font-size: 11px; font-weight: 400; color: #6c757d; float: right;">${dataFormatada}</small></div>
+                    <button class="btn-deletar-card" onclick="deletarCalculo(${item.id})" title="Remover">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                    <div class="price-tag">R$ ${item.price.toFixed(2)} <small style="font-size: 11px; font-weight: 400; color: #6c757d; margin-left: auto; padding-right: 25px;">${dataFormatada}</small></div>
                     <div class="info" style="grid-column: span 2; margin-top: -5px; margin-bottom: 5px;"><small>${medalha}</small></div>
                     <div class="info">Volume: ${item.volumeMl}ml</div>
                     <div class="cost-highlight">R$ ${item.costByMl.toFixed(2)}/ml</div>
@@ -173,24 +187,45 @@ async function carregarHistorico() {
     }
 }
 
+async function deletarCalculo(id) {
+    acaoPendente = { tipo: 'individual', id: id };
+
+    document.getElementById('modal-titulo').innerText = 'Remover Registro?';
+    document.getElementById('modal-mensagem').innerText = 'Deseja excluir este cálculo do seu histórico?';
+    document.getElementById('btn-confirmar-modal').innerText = 'Excluir';
+
+    document.getElementById('modal-confirmacao').style.display = 'flex';
+}
+
 //3. Função para limpar o histórico
 function limparHistorico() {
+    acaoPendente = { tipo: 'todos', id: null };
+
+    document.getElementById('modal-titulo').innerText = 'Limpar Histórico?';
+    document.getElementById('modal-mensagem').innerText = 'Esta ação removerá todos os registros permanentemente.';
+    document.getElementById('btn-confirmar-modal').innerText = 'Limpar Tudo';
+
     document.getElementById('modal-confirmacao').style.display = 'flex';
 }
 
 function fecharModal() {
     document.getElementById('modal-confirmacao').style.display = 'none';
+    acaoPendente = { tipo: null, id: null };
 }
 
-async function executarLimpeza() {
+async function executarAcaoConfirmada() {
+    const { tipo, id } = acaoPendente;
     fecharModal();
-    try {
-        const response = await fetch(`${API_URL}/limpar`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Erro ao limpar histórico');
 
-        showToast('Histórico removido.');
+    try {
+        let url = tipo === 'individual' ? `${API_URL}/deletar/${id}` : `${API_URL}/limpar`;
+        const response = await fetch(url, { method: 'DELETE' });
+
+        if (!response.ok) throw new Error('Erro ao processar exclusão');
+
+        showToast(tipo === 'individual' ? 'Cálculo removido.' : 'Histórico limpo.');
         carregarHistorico();
     } catch (error) {
-        showToast('Erro ao limpar histórico.', 'error');
+        showToast('Erro ao realizar operação.', 'error');
     }
 }

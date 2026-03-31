@@ -135,6 +135,30 @@ button#btn-calcular:hover {
     color: #007bff;
 }
 
+/* Botão de Deletar no Card */
+.btn-deletar-card {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4d4d22;
+    color: #dc3545;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-deletar-card:hover {
+    background: #dc3545;
+    color: white;
+}
+
 /* Destaque do Resultado */
 #result {
     margin-top: 20px;

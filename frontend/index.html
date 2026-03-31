@@ -20,11 +20,12 @@
     <!-- Modal de Confirmação -->
     <div id="modal-confirmacao" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <h3>Limpar Histórico?</h3>
-            <p>Esta ação removerá todos os registros permanentemente.</p>
+            <h3 id="modal-titulo">Limpar Histórico?</h3>
+            <p id="modal-mensagem">Esta ação removerá todos os registros permanentemente.</p>
             <div class="modal-buttons">
                 <button onclick="fecharModal()" class="btn-cancelar">Cancelar</button>
-                <button onclick="executarLimpeza()" class="btn-confirmar-danger">Limpar Tudo</button>
+                <button id="btn-confirmar-modal" onclick="executarAcaoConfirmada()"
+                    class="btn-confirmar-danger">Confirmar</button>
             </div>
         </div>
     </div>
