@@ -1,1 +1,11 @@
+# Banco de Dados Local
 backend/historico.db
+backend/historico.json
+
+# Python (Arquivos compilados e cache)
+__pycache__/
+*.pyc
+
+# Ambientes Virtuais
+venv/
+.env
