@@ -1,5 +1,7 @@
 # Banco de Dados Local
-backend/historico.db
+*.db
+*.sqlite
+instance/
 backend/historico.json
 
 # Python (Arquivos compilados e cache)
