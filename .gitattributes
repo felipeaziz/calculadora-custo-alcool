@@ -1,0 +1,18 @@
+# Normalização automática de finais de linha (LF para todos no repositório)
+* text=auto
+
+# Garante que arquivos de código usem LF (padrão Unix/Web)
+*.py text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# Trata explicitamente bancos de dados como binários para evitar corrupção em merges
+*.db binary
+*.sqlite binary
+
+# Arquivos que não devem ser incluídos em um pacote de exportação (ZIP)
+.gitignore export-ignore
+.gitattributes export-ignore
+.env.example export-ignore
+requirements.txt export-ignore
