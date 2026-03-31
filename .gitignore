@@ -3,8 +3,11 @@ backend/historico.db
 backend/historico.json
 
 # Python (Arquivos compilados e cache)
-__pycache__/
+**/__pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
 
 # Ambientes Virtuais
 venv/

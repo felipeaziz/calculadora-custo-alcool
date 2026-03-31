@@ -16,6 +16,10 @@ if ('serviceWorker' in navigator) {
         .catch(err => console.log("Erro ao registrar Service Worker:", err));
 }
 
+// Configuração do Day.js para datas relativas em Português
+dayjs.extend(window.dayjs_plugin_relativeTime);
+dayjs.locale('pt-br');
+
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -150,12 +154,7 @@ async function carregarHistorico() {
 
             // Formatação da data
             const dataFormatada = item.data_calculo
-                ? new Date(item.data_calculo).toLocaleString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
+                ? dayjs(item.data_calculo).fromNow()
                 : '---';
 
             html += `
