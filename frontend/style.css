@@ -119,6 +119,9 @@ button#btn-calcular:hover {
     border-bottom: 1px solid #f1f3f5;
     padding-bottom: 5px;
     margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .card-historico .info {

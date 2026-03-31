@@ -1,6 +1,13 @@
 // Tenta usar o IP configurado, mas permite fallback para localhost se estiver testando localmente
-const BACKEND_IP = '192.168.0.30';
-const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : `http://${BACKEND_IP}:5000`;
+// Dica: Em produção, o ideal é que o frontend e backend estejam no mesmo domínio/IP
+const BACKEND_CONFIG = {
+    production_ip: '192.168.0.30',
+    port: '5000'
+};
+
+const API_URL = window.location.hostname === 'localhost'
+    ? `http://localhost:${BACKEND_CONFIG.port}`
+    : `http://${BACKEND_CONFIG.production_ip}:${BACKEND_CONFIG.port}`;
 
 // Registro do Service Worker para PWA
 if ('serviceWorker' in navigator) {
@@ -141,9 +148,20 @@ async function carregarHistorico() {
             const classeDestaque = eOMelhor ? 'class="melhor-escolha"' : '';
             const medalha = eOMelhor ? '🏆 Melhor Escolha' : '';
 
+            // Formatação da data
+            const dataFormatada = item.data_calculo
+                ? new Date(item.data_calculo).toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+                : '---';
+
             html += `
                 <div class="card-historico ${eOMelhor ? 'melhor-escolha' : ''}">
-                    <div class="price-tag">R$ ${item.price.toFixed(2)} <small style="font-size: 12px; font-weight: 400; color: #6c757d;">${medalha}</small></div>
+                    <div class="price-tag">R$ ${item.price.toFixed(2)} <small style="font-size: 11px; font-weight: 400; color: #6c757d; float: right;">${dataFormatada}</small></div>
+                    <div class="info" style="grid-column: span 2; margin-top: -5px; margin-bottom: 5px;"><small>${medalha}</small></div>
                     <div class="info">Volume: ${item.volumeMl}ml</div>
                     <div class="cost-highlight">R$ ${item.costByMl.toFixed(2)}/ml</div>
                     <div class="info">Teor: ${item.alcoholicContent}%</div>
