@@ -33,11 +33,19 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Função auxiliar para remover máscaras e converter para número real
+function extrairNumero(valor) {
+    if (!valor) return NaN;
+    // Remove tudo que não é dígito ou vírgula, e troca vírgula por ponto
+    const numerico = valor.replace(/[^\d,]/g, '').replace(',', '.');
+    return parseFloat(numerico);
+}
+
 async function calcularCustoBeneficio() {
     //1. Capturar os valores dos inputs
-    const price = parseFloat(document.getElementById('price').value);
+    const price = extrairNumero(document.getElementById('price').value);
     const volumeMl = parseFloat(document.getElementById('volumeMl').value);
-    const alcoholicContent = parseFloat(document.getElementById('alcoholic').value);
+    const alcoholicContent = extrairNumero(document.getElementById('alcoholic').value);
 
     //2. Validações simples
     if (isNaN(price) || isNaN(volumeMl) || isNaN(alcoholicContent) || volumeMl <= 0) {
@@ -229,3 +237,22 @@ async function executarAcaoConfirmada() {
         showToast('Erro ao realizar operação.', 'error');
     }
 }
+
+// Listeners para aplicar as Máscaras em tempo real
+document.getElementById('price').addEventListener('input', function (e) {
+    let valor = e.target.value.replace(/\D/g, ""); // Remove não-dígitos
+    if (!valor) return e.target.value = "";
+
+    // Formata como moeda brasileira
+    valor = (valor / 100).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+    e.target.value = valor;
+});
+
+document.getElementById('alcoholic').addEventListener('input', function (e) {
+    let valor = e.target.value.replace(/\D/g, ""); // Remove não-dígitos
+    if (valor > 100) valor = 100; // Limita a 100%
+    e.target.value = valor ? valor + "%" : "";
+});
