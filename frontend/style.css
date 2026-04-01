@@ -1,10 +1,43 @@
 /* Importando uma fonte mais moderna */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+/* Definição de Variáveis Globais */
+:root {
+    /* Cores de Marca */
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --primary-light: #f0f7ff;
+    --primary-border: #cce5ff;
+
+    /* Cores de Estado */
+    --success-color: #28a745;
+    --success-bg: #d4edda;
+    --danger-color: #dc3545;
+    --danger-hover: #a71d2a;
+    --danger-light: #ff4d4d22;
+
+    /* Cores Neutras */
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-nav: #f1f3f5;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --text-nav: #495057;
+    --border-color: #e9ecef;
+
+    /* Layout e Design Tokens */
+    --radius-lg: 20px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.1);
+    --shadow-main: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --container-width: 450px;
+}
+
 /* Configurações Globais */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f8f9fa;
+    background-color: var(--bg-body);
     margin: 0;
     display: flex;
     justify-content: center;
@@ -15,11 +48,10 @@ body {
 }
 
 .container {
-    background: white;
+    background: var(--bg-card);
     padding: 20px;
     width: 100%;
-    max-width: 450px;
-    /* Largura ideal de um app mobile no desktop */
+    max-width: var(--container-width);
     min-height: 100vh;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
     display: flex;
@@ -31,27 +63,27 @@ nav {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    background: #f1f3f5;
+    background: var(--bg-nav);
     padding: 5px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
 }
 
 nav button {
     flex: 1;
     padding: 12px;
     border: none;
-    border-radius: 10px;
+    border-radius: calc(var(--radius-md) - 2px);
     background: transparent;
     cursor: pointer;
     font-weight: 600;
-    color: #495057;
+    color: var(--text-nav);
     transition: all 0.2s;
 }
 
 nav button.active {
-    background: white;
-    color: #007bff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-soft);
 }
 
 /* Inputs e Botões */
@@ -59,8 +91,8 @@ input {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
     box-sizing: border-box;
     font-size: 16px;
     transition: border-color 0.2s;
@@ -68,23 +100,22 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--primary-color);
 }
 
 label {
     font-weight: 600;
     font-size: 14px;
-    color: #495057;
+    color: var(--text-nav);
 }
 
 button#btn-calcular {
     width: 100%;
     padding: 12px;
-    background-color: #007bff;
-    /* Azul moderno */
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -93,15 +124,14 @@ button#btn-calcular {
 }
 
 button#btn-calcular:hover {
-    background-color: #0056b3;
-    /* Escurece ao passar o mouse */
+    background-color: var(--primary-hover);
 }
 
 /* Cards de Histórico (Substituindo a tabela) */
 .card-historico {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     padding: 15px;
     margin-bottom: 12px;
     display: grid;
@@ -115,8 +145,8 @@ button#btn-calcular:hover {
     grid-column: span 2;
     font-size: 18px;
     font-weight: 700;
-    color: #212529;
-    border-bottom: 1px solid #f1f3f5;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--bg-nav);
     padding-bottom: 5px;
     margin-bottom: 5px;
     display: flex;
@@ -126,13 +156,13 @@ button#btn-calcular:hover {
 
 .card-historico .info {
     font-size: 13px;
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
 .card-historico .cost-highlight {
     text-align: right;
     font-weight: 700;
-    color: #007bff;
+    color: var(--primary-color);
 }
 
 /* Botão de Deletar no Card */
@@ -140,8 +170,8 @@ button#btn-calcular:hover {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #ff4d4d22;
-    color: #dc3545;
+    background: var(--danger-light);
+    color: var(--danger-color);
     border: none;
     border-radius: 50%;
     width: 24px;
@@ -220,16 +250,16 @@ button#btn-limpar:hover {
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-main);
     animation: slideUp 0.3s ease-out;
 }
 
 .toast.error {
-    background: #dc3545;
+    background: var(--danger-color);
 }
 
 .toast.success {
-    background: #28a745;
+    background: var(--success-color);
 }
 
 @keyframes slideUp {
@@ -251,14 +281,14 @@ button#btn-limpar:hover {
     align-items: center;
     justify-content: center;
     padding: 40px 0;
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
 .spinner {
     width: 30px;
     height: 30px;
-    border: 3px solid #e9ecef;
-    border-top: 3px solid #007bff;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin-bottom: 10px;
@@ -290,9 +320,9 @@ button#btn-limpar:hover {
 }
 
 .modal-content {
-    background: white;
+    background: var(--bg-card);
     padding: 24px;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     width: 85%;
     max-width: 340px;
     text-align: center;
@@ -310,19 +340,19 @@ button#btn-limpar:hover {
 .btn-confirmar-danger {
     flex: 1;
     padding: 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     border: none;
     font-weight: 600;
     cursor: pointer;
 }
 
 .btn-cancelar {
-    background: #f1f3f5;
-    color: #495057;
+    background: var(--bg-nav);
+    color: var(--text-nav);
 }
 
 .btn-confirmar-danger {
-    background: #dc3545;
+    background: var(--danger-color);
     color: white;
 }
 
